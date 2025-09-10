@@ -90,7 +90,7 @@ class SelfdriveD(CruiseHelper):
     if SIMULATION:
       ignore += ['driverCameraState', 'managerState']
     
-    ignore += ['driverCameraState', 'managerState']
+    ignore += ['driverCameraState', 'driverMonitoringState']
     
     if REPLAY:
       # no vipc in replay will make them ignored anyways
