@@ -4,6 +4,8 @@ from opendbc.car import DT_CTRL, structs
 from opendbc.car.interfaces import MAX_CTRL_SPEED
 
 from openpilot.selfdrive.selfdrived.events import Events
+from openpilot.common.params import Params
+params = Params()
 
 ButtonType = structs.CarState.ButtonEvent.Type
 GearShifter = structs.CarState.GearShifter
@@ -214,7 +216,7 @@ class CarSpecificEvents:
       elif not CS.cruiseState.enabled:
         events.add(EventName.pcmDisable)
 
-    if CS.dawStatus in [1,2] and CS.dawStatus != CS_prev.dawStatus:
+    if CS.dawStatus in [1,2] and CS.dawStatus != CS_prev.dawStatus and params.get_bool("EnableAttentionAlert"):
       if CS.dawStatus == 2 and CS_prev.dawStatus != 1:
         events.add(EventName.dawLevel2)
       elif CS.dawStatus == 1:

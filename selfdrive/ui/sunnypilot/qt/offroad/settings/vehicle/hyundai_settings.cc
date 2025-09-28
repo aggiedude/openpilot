@@ -20,6 +20,28 @@ HyundaiSettings::HyundaiSettings(QWidget *parent) : BrandSettingsInterface(paren
   QObject::connect(longitudinalTuningToggle, &ButtonParamControlSP::buttonClicked, this, &HyundaiSettings::updateSettings);
   list->addItem(longitudinalTuningToggle);
   longitudinalTuningToggle->showDescription();
+
+  attentionVisualToggle = new ToggleControl(
+    tr("Driver Attention Visual"),
+    tr("Show the custom on-screen driver attention warning level."),
+    "../assets/offroad/icon_attention.png",
+    params.getBool("EnableAttentionVisual")
+  );
+  QObject::connect(attentionVisualToggle, &ToggleControl::toggleFlipped, [=](bool state) {
+    params.putBool("EnableAttentionVisual", state);
+  });
+  list->addItem(attentionVisualToggle);
+
+  attentionAlertToggle = new ToggleControl(
+    tr("Driver Attention Alert"),
+    tr("Play an audible alert when the attention level reaches 1."),
+    "../assets/offroad/icon_alert.png",
+    params.getBool("EnableAttentionAlert")
+  );
+  QObject::connect(attentionAlertToggle, &ToggleControl::toggleFlipped, [=](bool state) {
+    params.putBool("EnableAttentionAlert", state);
+  });
+  list->addItem(attentionAlertToggle);
 }
 
 void HyundaiSettings::updateSettings() {

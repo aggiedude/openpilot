@@ -4,6 +4,12 @@
 
 #include "selfdrive/ui/qt/util.h"
 
+#include "common/params_keys.h"
+
+static bool enable_attention_visual = false;
+static bool enable_attention_alert = false;
+static uint64_t last_param_check = 0;
+
 constexpr int SET_SPEED_NA = 255;
 
 HudRenderer::HudRenderer() {}
@@ -39,6 +45,14 @@ void HudRenderer::updateState(const UIState &s) {
   v_ego_cluster_seen = v_ego_cluster_seen || car_state.getVEgoCluster() != 0.0;
   float v_ego = v_ego_cluster_seen ? car_state.getVEgoCluster() : car_state.getVEgo();
   speed = std::max<float>(0.0f, v_ego * (is_metric ? MS_TO_KPH : MS_TO_MPH));
+
+  uint64_t now = millis_since_boot();
+  if (now - last_param_check > 1000) {
+    Params params;
+    enable_attention_visual = params.getBool("EnableAttentionVisual");
+    enable_attention_alert = params.getBool("EnableAttentionAlert");
+    last_param_check = now;
+  }
 }
 
 void HudRenderer::draw(QPainter &p, const QRect &surface_rect) {
@@ -55,7 +69,9 @@ void HudRenderer::draw(QPainter &p, const QRect &surface_rect) {
     drawSetSpeed(p, surface_rect);
   }
   drawCurrentSpeed(p, surface_rect);
-  drawDAWStatus(p, surface_rect);
+  if (enable_attention_visual) {
+    drawDAWStatus(p, surface_rect);
+  }
 
   p.restore();
 }
